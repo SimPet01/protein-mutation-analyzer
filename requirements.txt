@@ -1,0 +1,12 @@
+biopython==1.81
+pandas==2.0.0
+matplotlib==3.7.0
+numpy==1.24.0
+
+protein-mutation-analyzer/
+├── README.md
+├── .gitignore
+├── requirements.txt
+├── data/
+├── scripts/
+└── output/
