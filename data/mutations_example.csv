@@ -1,6 +1,6 @@
 position,original_aa,mutant_aa,description
 7,E,K,Glutamic acid to Lysine - charge reversal
-22,E,A,Glutamic acid to Alanine - loss of charge
-45,H,Y,Histidine to Tyrosine - aromatic substitution
-64,E,D,Glutamic acid to Aspartic acid - conservative
-103,F,L,Phenylalanine to Leucine - hydrophobic change
+22,I,V,Isoleucine to Valine - conservative hydrophobic
+45,D,N,Aspartic acid to Asparagine - loss of charge
+64,K,R,Lysine to Arginine - conservative positive
+103,K,E,Lysine to Glutamic acid - charge reversal
