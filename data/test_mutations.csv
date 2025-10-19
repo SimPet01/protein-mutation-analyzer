@@ -1,0 +1,6 @@
+position,original_aa,mutant_aa,description
+5,W,F,Tryptophan to Phenylalanine - aromatic conservation
+15,L,P,Leucine to Proline - introduces kink
+30,E,K,Glutamic acid to Lysine - charge flip
+50,Q,E,Glutamine to Glutamic acid - gain of charge
+80,L,V,Leucine to Valine - conservative hydrophobic

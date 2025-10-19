@@ -1,0 +1,6 @@
+position,original_aa,mutant_aa,mw_change,charge_change,hydrophobicity_change,valid,classification,group_change,same_group,description
+5,W,F,-39.0,0,3.7,True,Radical,Hydrophobic → Hydrophobic,True,Tryptophan to Phenylalanine - aromatic conservation
+15,L,P,-16.1,0,-5.4,True,Radical,Hydrophobic → Hydrophobic,True,Leucine to Proline - introduces kink
+30,E,K,-0.9,2,-0.4,True,Radical,Charged- → Charged+,False,Glutamic acid to Lysine - charge flip
+50,Q,E,1.0,-1,0.0,True,Radical,Polar → Charged-,False,Glutamine to Glutamic acid - gain of charge
+80,L,V,-14.1,0,0.4,True,Moderate,Hydrophobic → Hydrophobic,True,Leucine to Valine - conservative hydrophobic
