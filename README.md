@@ -79,18 +79,13 @@ protein-mutation-analyzer/
 ├── data/                        # Input files
 │   ├── example_protein.fasta
 │   ├── mutations_example.csv
-│   ├── test_protein.fasta
-│   └── test_mutations.csv
 ├── scripts/                     # Python code
 │   ├── analyzer.py              # Main analyzer class
-│   └── test_analyzer.py         # Testing script
+│   └── check_positions.py       # Testing script for aminoacids position
 └── output/                      # Generated results
     ├── mutation_analysis.csv
     ├── mutations_visualization.png
-    ├── mutation_report.html
-    ├── test_mutation_analysis.csv
-    ├── test_mutations_visualization.png
-    └── test_mutation_report.html
+    └── mutation_report.html
 ```
 
 ## Usage Examples
@@ -172,16 +167,6 @@ The analyzer uses established biochemical scales:
 
 ### HTML Report
 The HTML report provides an interactive, color-coded table viewable in any web browser.
-
-## Testing
-
-Run the test suite with alternative data:
-```bash
-cd scripts
-python test_analyzer.py
-```
-
-This validates the analyzer with a different protein sequence and mutation set.
 
 ## Dependencies
 
