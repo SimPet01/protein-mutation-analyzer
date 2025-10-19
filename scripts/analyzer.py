@@ -2,6 +2,11 @@ import pandas as pd
 from Bio import SeqIO
 from Bio.SeqUtils.ProtParam import ProteinAnalysis
 
+# Nastavení pro lepší zobrazení Pandas DataFrames
+pd.set_option('display.max_columns', None)  # Zobraz všechny sloupce
+pd.set_option('display.width', None)  # Neomezuj šířku
+pd.set_option('display.max_colwidth', 50)  # Max šířka jednoho sloupce
+
 
 class ProteinMutationAnalyzer:
     """
@@ -105,6 +110,81 @@ class ProteinMutationAnalyzer:
             'charge': charge
         }
 
+    def classify_mutation(self, mw_change, charge_change, hydro_change):
+        """
+        Klasifikuje mutaci jako konzervativní, moderátní nebo radikální.
+
+        Klasifikace je založená na kombinaci změn vlastností:
+
+        Conservative (konzervativní):
+            - Malá změna hmotnosti (< 5 Da)
+            - Bez změny náboje
+            - Malá změna hydrofobicity (< 0.5)
+            Příklad: L→I (oba hydrofobní, podobná velikost)
+
+        Radical (radikální):
+            - Velká změna hmotnosti (> 20 Da)
+            - NEBO změna náboje
+            - NEBO velká změna hydrofobicity (> 1.5)
+            Příklad: K→E (změna z + na -)
+
+        Moderate (moderátní):
+            - Vše mezi konzervativní a radikální
+
+        Args:
+            mw_change: Změna molekulární hmotnosti (Da)
+            charge_change: Změna elektrického náboje
+            hydro_change: Změna hydrofobicity
+
+        Returns:
+            str: 'Conservative', 'Moderate', nebo 'Radical'
+        """
+        # Konzervativní = všechny změny jsou malé
+        if (abs(mw_change) < 5 and
+                abs(charge_change) == 0 and
+                abs(hydro_change) < 0.5):
+            return 'Conservative'
+
+        # Radikální = alespoň jedna změna je velká
+        elif (abs(mw_change) > 20 or
+              abs(charge_change) != 0 or
+              abs(hydro_change) > 1.5):
+            return 'Radical'
+
+        # Všechno ostatní je moderátní
+        else:
+            return 'Moderate'
+
+    def get_aa_group(self, aa):
+        """
+        Zařadí aminokyselinu do chemické skupiny podle vlastností.
+
+        Kategorizace je založená na fyzikálně-chemických vlastnostech:
+        - Hydrophobic: Nepolární aminokyseliny s hydrofobními postranními řetězci
+        - Polar: Polární nenabitá aminokyseliny
+        - Charged+: Bazické (kladně nabitá při pH 7)
+        - Charged-: Kyselé (záporně nabitá při pH 7)
+        - Special: Glycin (nejmenší, nejvíc flexibilní)
+
+        Args:
+            aa: Jednopísmenný kód aminokyseliny
+
+        Returns:
+            str: Název skupiny, do které aminokyselina patří
+        """
+        groups = {
+            'Hydrophobic': ['A', 'V', 'I', 'L', 'M', 'F', 'W', 'P'],
+            'Polar': ['S', 'T', 'C', 'Y', 'N', 'Q'],
+            'Charged+': ['K', 'R', 'H'],
+            'Charged-': ['D', 'E'],
+            'Special': ['G']
+        }
+
+        for group, members in groups.items():
+            if aa in members:
+                return group
+        return 'Unknown'
+
     def analyze_mutation(self, position, original_aa, mutant_aa):
         """
         Analyzuje jednotlivou mutaci a vypočítá změny vlastností.
@@ -161,30 +241,67 @@ class ProteinMutationAnalyzer:
             'valid': True
         }
 
+    def analyze_mutation_detailed(self, position, original_aa, mutant_aa):
+        """
+        Detailní analýza mutace včetně klasifikace a informací o skupinách.
+
+        Tato metoda rozšiřuje základní analyze_mutation o:
+        - Klasifikaci mutace (conservative/moderate/radical)
+        - Informaci o změně chemické skupiny
+        - Informaci, jestli mutace zůstává ve stejné skupině
+
+        Args:
+            position: Pozice v sekvenci
+            original_aa: Původní aminokyselina
+            mutant_aa: Mutantní aminokyselina
+
+        Returns:
+            dict: Rozšířený slovník s výsledky analýzy
+        """
+        # Zavoláme původní metodu pro základní analýzu
+        result = self.analyze_mutation(position, original_aa, mutant_aa)
+
+        # Pokud byla chyba při validaci, vrátíme jen error
+        if 'error' in result:
+            return result
+
+        # Přidáme klasifikaci mutace
+        result['classification'] = self.classify_mutation(
+            result['mw_change'],
+            result['charge_change'],
+            result['hydrophobicity_change']
+        )
+
+        # Přidáme informace o chemických skupinách
+        orig_group = self.get_aa_group(original_aa)
+        mut_group = self.get_aa_group(mutant_aa)
+        result['group_change'] = f"{orig_group} → {mut_group}"
+        result['same_group'] = orig_group == mut_group
+
+        return result
+
     def analyze_all_mutations(self):
         """
         Analyzuje všechny mutace načtené z CSV souboru.
 
-        Prochází všechny řádky DataFrame s mutacemi a pro každou
-        volá metodu analyze_mutation. Výsledky ukládá do nového DataFrame.
+        Používá rozšířenou metodu analyze_mutation_detailed pro získání
+        kompletních informací o každé mutaci včetně klasifikace.
 
         Returns:
-            DataFrame s výsledky analýzy všech mutací
+            DataFrame s detailními výsledky analýzy všech mutací
         """
         results = []
 
-        # iterrows() vrací (index, row) tuple pro každý řádek DataFrame
         for idx, row in self.mutations_df.iterrows():
-            result = self.analyze_mutation(
+            # Teď používáme detailní verzi analýzy
+            result = self.analyze_mutation_detailed(
                 row['position'],
                 row['original_aa'],
                 row['mutant_aa']
             )
-            # Přidáme popis z CSV, pokud existuje
             result['description'] = row.get('description', '')
             results.append(result)
 
-        # Převedeme list slovníků na DataFrame
         self.results_df = pd.DataFrame(results)
         return self.results_df
 
@@ -212,7 +329,11 @@ if __name__ == "__main__":
     results = analyzer.analyze_all_mutations()
 
     print("\n=== ANALYSIS RESULTS ===")
-    print(results)
+    # Vypíšeme jen některé sloupce pro přehlednost
+    columns_to_show = ['position', 'original_aa', 'mutant_aa',
+                       'mw_change', 'charge_change', 'hydrophobicity_change',
+                       'classification', 'group_change']
+    print(results[columns_to_show])
 
     # Uložíme výsledky
     analyzer.save_results()

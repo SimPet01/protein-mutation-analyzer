@@ -1,6 +1,6 @@
-position,original_aa,mutant_aa,mw_change,charge_change,hydrophobicity_change,valid,description
-7,E,K,-0.9,2,-0.4,True,Glutamic acid to Lysine - charge reversal
-22,I,V,-14.1,0,-0.3,True,Isoleucine to Valine - conservative hydrophobic
-45,D,N,-1.0,1,0.0,True,Aspartic acid to Asparagine - loss of charge
-64,K,R,28.0,0,-0.6,True,Lysine to Arginine - conservative positive
-103,K,E,0.9,-2,0.4,True,Lysine to Glutamic acid - charge reversal
+position,original_aa,mutant_aa,mw_change,charge_change,hydrophobicity_change,valid,classification,group_change,same_group,description
+7,E,K,-0.9,2,-0.4,True,Radical,Charged- → Charged+,False,Glutamic acid to Lysine - charge reversal
+22,I,V,-14.1,0,-0.3,True,Moderate,Hydrophobic → Hydrophobic,True,Isoleucine to Valine - conservative hydrophobic
+45,D,N,-1.0,1,0.0,True,Radical,Charged- → Polar,False,Aspartic acid to Asparagine - loss of charge
+64,K,R,28.0,0,-0.6,True,Radical,Charged+ → Charged+,True,Lysine to Arginine - conservative positive
+103,K,E,0.9,-2,0.4,True,Radical,Charged+ → Charged-,False,Lysine to Glutamic acid - charge reversal
