@@ -1,3 +1,7 @@
+"""
+For training purposes. To find out which aminoacids in the tested protein are occupying selected positions.
+"""
+
 from Bio import SeqIO
 
 # Načteme sekvenci
