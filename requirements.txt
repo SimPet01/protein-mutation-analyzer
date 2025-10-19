@@ -4,9 +4,12 @@ matplotlib==3.10.7
 numpy==2.3.4
 
 protein-mutation-analyzer/
+├── data/
+├── scripts/
+├── output/
 ├── README.md
 ├── .gitignore
 ├── requirements.txt
-├── data/
-├── scripts/
-└── output/
+├── INSTALL_TEST.md
+├── LICENSE
+└── USAGE.md
